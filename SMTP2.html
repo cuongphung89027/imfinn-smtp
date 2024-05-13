@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thông tin</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #333;
+    }
+
+    form {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    input[type="text"] {
+        width: calc(100% - 10px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Nhập thông tin</h2>
+    <form id="infoForm">
+        <label for="name">Tên:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="smtp">SMTP:</label>
+        <input type="text" id="smtp" name="smtp" required><br>
+        <label for="expiryDate">Ngày hết hạn:</label>
+        <input type="text" id="expiryDate" name="expiryDate" required><br>
+        <label for="oneDrive">OneDrive:</label>
+        <input type="text" id="oneDrive" name="oneDrive" required><br>
+        <button type="button" onclick="submitData()">Lưu dữ liệu</button>
+    </form>
+
+    <h2>Tìm kiếm thông tin</h2>
+    <label for="searchSmtp">Tìm kiếm theo SMTP:</label>
+    <input type="text" id="searchSmtp">
+    <button type="button" onclick="searchBySmtp()">Tìm kiếm</button>
+
+    <h2>Dữ liệu đã nhập</h2>
+    <table id="infoTable">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>SMTP (email)</th>
+                <th>Ngày hết hạn</th>
+                <th>OneDrive</th>
+            </tr>
+        </thead>
+        <tbody id="infoTableBody">
+            <!-- Dữ liệu sẽ được thêm vào đây từ JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+function submitData() {
+    var name = document.getElementById("name").value;
+    var smtp = document.getElementById("smtp").value;
+    var expiryDate = document.getElementById("expiryDate").value;
+    var oneDrive = document.getElementById("oneDrive").value;
+    
+    var data = {
+        name: name,
+        smtp: smtp,
+        expiryDate: expiryDate,
+        oneDrive: oneDrive
+    };
+
+    var storedData = JSON.parse(localStorage.getItem("userData")) || [];
+
+    storedData.push(data);
+
+    localStorage.setItem("userData", JSON.stringify(storedData));
+
+    addToTable(data);
+}
+
+function addToTable(data) {
+    var tableBody = document.getElementById("infoTableBody");
+    var row = tableBody.insertRow();
+    row.insertCell(0).innerHTML = data.name;
+    row.insertCell(1).innerHTML = data.smtp;
+    row.insertCell(2).innerHTML = data.expiryDate;
+    row.insertCell(3).innerHTML = data.oneDrive;
+}
+
+function searchBySmtp() {
+    var searchSmtp = document.getElementById("searchSmtp").value;
+    var table = document.getElementById("infoTable");
+    var rows = table.getElementsByTagName("tr");
+    
+    for (var i = 1; i < rows.length; i++) {
+        var rowData = rows[i].getElementsByTagName("td")[1].innerHTML;
+        if (rowData === searchSmtp) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+    }
+}
+
+window.onload = function() {
+    var storedData = JSON.parse(localStorage.getItem("userData")) || [];
+    storedData.forEach(function(data) {
+        addToTable(data);
+    });
+};
+</script>
+
+</body>
+</html>
